@@ -1,4 +1,20 @@
 jQuery(document).ready(function() {
+
+    // initialize geoloqi
+    geoloqi.init({
+      client_id: 'dd261f12d13b5817c631826b5c209c57',
+      package_name: 'Open Search & Rescue',
+      package_verison: '0.1',
+      persist: 'cookies'
+    });
+    geoloqi.onAuthorize = function(response, error){
+      console.log("You are a user!");
+    };
+    geoloqi.onLoginError = function(error){
+      console.log("You are not a user!");
+      $('#linkDialog').click();
+    }
+
 // watch position functions
 
         var goodPositionChange = function(pos) {
@@ -186,6 +202,12 @@ jQuery(document).ready(function() {
         return dfd.promise();
     };
 
+
+    $('button#signin').click(function(){
+      var email = $('input#email').val(),
+          password = $('input#password').val();
+      geoloqi.login(email, password);
+    });
 
     $('#saveLocation').click(function (event) { 
         event.preventDefault();
