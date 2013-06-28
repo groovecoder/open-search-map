@@ -1,10 +1,13 @@
 //  map object 
 var search_map= function (element) {    
     // 'tulsa 36.1539,-95.9925'
+    // 'moore 35.339,-97.489'
         var this_map,
         search_overlay,
         map_element = null,
         tulsaLatlng =  tulsaLatlng ||  new google.maps.LatLng(36.1539,-95.9925),
+        mooreLatlng =  mooreLatlng ||  new google.maps.LatLng(35.339,-97.489),
+        sparkrelief_icon = './img/sparkrelief_icon.png',
         searchMapOptions = {
             visualRefresh:true,
             zoom: 18,
@@ -33,7 +36,7 @@ var search_map= function (element) {
        
     geo=google.maps.geometry.spherical,    
     
-    search_list = {},
+    search_list = {}, spark_list = {},
 
     search_info = function (key,info_obj) {
         var response = [];
@@ -111,6 +114,32 @@ var search_map= function (element) {
             marker.search_window= set_search_click(marker, key, info_obj);
         }
         return marker;
+    },
+
+    addSparkOffer = function (offer) {
+        var position = new google.maps.LatLng(offer.lat, offer.lng);
+        if (!spark_list[offer._id]) {
+            var marker = new google.maps.Marker({
+                draggable:true,
+                map: this_map,
+                position: position,
+                visible:true,
+                icon:{
+                    anchor: new google.maps.Point(32, 32),
+                    scaledSize: new google.maps.Size(30,30,'px','px'),
+                    url: sparkrelief_icon
+                }
+            });
+        }
+        var infowindow_content = '<h1>' + offer.offerType + '</h1>'+
+            '<p>' + offer.offerDesc + '</p>';
+        var infowindow = new google.maps.InfoWindow({
+            content: infowindow_content
+        });
+        google.maps.event.addListener(marker, 'click', function(){
+            infowindow.open(this_map, marker);
+        });
+        return {position: position, marker: marker, infowindow: infowindow};
     };
         
     if (element !== map_element){
@@ -149,6 +178,7 @@ var search_map= function (element) {
     this.map.user = user_marker;
     this.map.user.accuracy=user_accuracy_circle.radius;
     this.map.addSearch = addSearch;      
+    this.map.addSparkOffer = addSparkOffer;
     this_map=this.map;
     return this.map;
 };

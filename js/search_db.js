@@ -4,7 +4,7 @@
 // currently this data is stored with geoloqi so this is mainly a wrapper on geoloqi functions
 
 var search_db = function (){
-    var search_list={}, searchers_list={},user_list={};
+    var search_list={}, spark_list=[], searchers_list={},user_list={};
 
     this.searchBounds = function (arrayLatlng){        
         // Based on Google Maps API v3 
@@ -61,6 +61,14 @@ var search_db = function (){
                 this_map.panTo(search_loc);
             };
         });
+
+        // Get offer data from sparkrelief.org
+        // https://sparkrelief.org/offers/for/oklahoma-city-tornado?disaster=oklahoma-city-tornado
+        $.getJSON('js/okc_tornado_offers.json', function(data){
+            $(data).each(function(index, offer){
+                spark_list.push(this_map.addSparkOffer(offer));
+            });
+        });
         
         
         watch_user: new geoloqi.watchPosition({
@@ -72,6 +80,7 @@ var search_db = function (){
 
     
     this.searches=search_list,
+    this.sparks=spark_list,
     this.searchers=searchers_list,
     this.get= geoloqi.get;
     this.post=geoloqi.post;

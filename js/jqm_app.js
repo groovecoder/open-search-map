@@ -1,8 +1,9 @@
 jQuery(document).ready(function() {
 
     //init the map
-    var currentLatlng  = currentLatlng || new google.maps.LatLng(36.1539,-95.9925),
+    var currentLatlng  = currentLatlng || new google.maps.LatLng(35.339,-97.489),
         ttown= ttown || new search_map(document.getElementById("map_content"));
+    var layers = {'sparks': {visible: false}};
 
     // init search data
     var search_data = search_data || new search_db();
@@ -96,6 +97,23 @@ jQuery(document).ready(function() {
         $( "#menu_panel" ).panel( "close" );
         ttown.fitBounds(search_data.searchBounds());
     });    
+
+    $('a#viewSparkRelief').click(function(){
+        $( "#menu_panel" ).panel( "close" );
+        // go to OKC
+        ttown.panTo(new google.maps.LatLng(35.466,-97.515));
+        ttown.setZoom(11);
+        var visible = layers['sparks'].visible;
+        $(search_data.sparks).each(function(index, spark){
+            if (visible) {
+                spark.marker.setVisible(false);
+            } else {
+                spark.marker.setVisible(true);
+            }
+            spark.infowindow.close();
+        });
+        layers['sparks'].visible = !visible;
+    });
 
     $('a#viewUser').click(function(){
          $( "#menu_panel" ).panel( "close" );
